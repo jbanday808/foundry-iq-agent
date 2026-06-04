@@ -1253,11 +1253,6 @@ Description:
 
 Shows successful retrieval of the Azure AI Search service name from the connected knowledge base.
 
-References:
-
-AWS Pricing Calculator User Guide: This guide provides detailed instructions on using the AWS Pricing Calculator to estimate costs for different AWS services.
-
-```markdown
 ![Azure AI Search Validation](images/enterprise-knowledge-agent-test-01.png)
 ```
 
