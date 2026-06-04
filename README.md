@@ -1265,7 +1265,6 @@ Shows successful retrieval of deployment resource information from the connected
 
 
 ![Resource Validation](images/enterprise-knowledge-agent-test-02.png)
-```
 
 ---
 
