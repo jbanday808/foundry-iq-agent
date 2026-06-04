@@ -1672,7 +1672,7 @@ Cloud Engineering | Cybersecurity | AI | Platform Engineering
 
 ### GitHub
 
-https://github.com/jbanday808
+https://github.com/jbanday808/foundry-iq-agent
 
 ### LinkedIn
 
