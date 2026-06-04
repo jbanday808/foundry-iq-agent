@@ -827,7 +827,6 @@ Description:
 Displays the Python SDK code used to connect to Microsoft Foundry IQ and interact with the enterprise knowledge agent.
 
 
-```markdown
 ![Python SDK Integration](images/run_agent.py.png)
 ```
 
