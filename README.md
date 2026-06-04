@@ -1059,7 +1059,6 @@ Displays the Python SDK code used to connect to Microsoft Foundry IQ and interac
 
 Documentation:
 
-```text
 https://learn.microsoft.com/cli/azure/install-azure-cli-windows
 ```
 
