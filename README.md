@@ -85,9 +85,7 @@ References:
 
 AWS Pricing Calculator User Guide: This guide provides detailed instructions on using the AWS Pricing Calculator to estimate costs for different AWS services.
 
-```markdown
 ![Azure AI Foundry Workflow](images/Azure-AI-Foundry-Diagram.png)
-```
 
 ---
 
@@ -559,9 +557,7 @@ Description:
 
 Shows the enterprise-knowledge-agent successfully retrieving the Azure AI Search service name from the connected knowledge base.
 
-```markdown
 ![Azure AI Search Validation](images/enterprise-knowledge-agent-test-01.png)
-```
 
 ---
 
@@ -571,7 +567,6 @@ Description:
 
 Shows the enterprise-knowledge-agent successfully identifying the Azure Resource Group and deployment region.
 
-```markdown
 ![Resource Validation](images/enterprise-knowledge-agent-test-02.png)
 ```
 
@@ -583,7 +578,6 @@ Description:
 
 Demonstrates successful document summarization using the connected enterprise knowledge base.
 
-```markdown
 ![Document Summarization](images/enterprise-knowledge-agent-output.png)
 ```
 
@@ -624,7 +618,6 @@ Description:
 
 Shows the PowerShell environment used to deploy and test the Foundry IQ solution.
 
-```markdown
 ![PowerShell Environment](images/output-run-agent.py.png)
 ```
 
@@ -1105,7 +1098,7 @@ Description:
 
 Shows successful execution of run_agent.py and validation of responses returned from the enterprise knowledge agent.
 
-```markdown
+
 ![Python Execution Results](images/output-run-agent.py.png)
 ```
 
@@ -1277,11 +1270,7 @@ Description:
 
 Shows successful retrieval of deployment resource information from the connected knowledge base.
 
-References:
 
-AWS Pricing Calculator User Guide: This guide provides detailed instructions on using the AWS Pricing Calculator to estimate costs for different AWS services.
-
-```markdown
 ![Resource Validation](images/enterprise-knowledge-agent-test-02.png)
 ```
 
