@@ -1254,7 +1254,6 @@ Description:
 Shows successful retrieval of the Azure AI Search service name from the connected knowledge base.
 
 ![Azure AI Search Validation](images/enterprise-knowledge-agent-test-01.png)
-```
 
 ---
 
@@ -1277,7 +1276,6 @@ Description:
 Shows successful document summarization using the enterprise knowledge base.
 
 ![Document Summarization Validation](images/enterprise-knowledge-agent-output.png)
-```
 
 ---
 
