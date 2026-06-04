@@ -1281,11 +1281,6 @@ Description:
 
 Shows successful document summarization using the enterprise knowledge base.
 
-References:
-
-AWS Pricing Calculator User Guide: This guide provides detailed instructions on using the AWS Pricing Calculator to estimate costs for different AWS services.
-
-```markdown
 ![Document Summarization Validation](images/enterprise-knowledge-agent-output.png)
 ```
 
