@@ -1049,9 +1049,6 @@ Displays the Python SDK code used to connect to Microsoft Foundry IQ and interac
 
 
 ![Python SDK Integration](images/run_agent.py.png)
-```
-
-
 # Azure CLI Installation
 
 ## Step 16: Install Azure CLI
@@ -1059,7 +1056,6 @@ Displays the Python SDK code used to connect to Microsoft Foundry IQ and interac
 Documentation:
 
 https://learn.microsoft.com/cli/azure/install-azure-cli-windows
-```
 
 ### Verify Installation
 
