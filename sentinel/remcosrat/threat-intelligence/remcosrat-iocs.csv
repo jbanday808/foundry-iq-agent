@@ -1,0 +1,8 @@
+indicator_type,indicator_value,description,malware_family,confidence,source
+sha256,356106324c797ba967a2a8cde2156e866fe008332046747866efa82a99e62083,RemcosRAT obfuscated VBS loader,RemcosRAT,High,MalwareBazaar static analysis
+url,https://nameless-scene-7204.uploadeeeesclientess.workers.dev/9VKJ-WXKE-YYQN-63FX/img_xxdd6n.png,Remote payload location decoded from the VBS loader,RemcosRAT,High,Static analysis
+domain,nameless-scene-7204.uploadeeeesclientess.workers.dev,Remote infrastructure hosting the encoded payload,RemcosRAT,High,Static analysis
+filename,WWIvxS4BHi.vbs,Self-copied VBS filename,RemcosRAT,High,Static analysis
+filepath,C:\Users\Public\Downloads\WWIvxS4BHi.vbs,Self-copy destination used by the loader,RemcosRAT,High,Static analysis
+environment_variable,buckskins,User environment variable used to store PowerShell code,RemcosRAT,High,Static analysis
+yara_rule,RemcosRAT_Obfuscated_VBS_Loader,Custom YARA rule created from static artifacts,RemcosRAT,High,Custom static analysis

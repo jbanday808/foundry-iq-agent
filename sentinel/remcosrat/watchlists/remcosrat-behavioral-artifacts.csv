@@ -1,0 +1,20 @@
+artifact_id,artifact_type,artifact_value,description,malware_family,confidence,source
+REM-001,filename,WWIvxS4BHi.vbs,Filename used when the VBS loader copies itself,RemcosRAT,High,Static analysis
+REM-002,filepath,C:\Users\Public\Downloads\WWIvxS4BHi.vbs,Full destination path used by the self-copy operation,RemcosRAT,High,Static analysis
+REM-003,environment_variable,buckskins,User environment variable used to store the staged PowerShell command,RemcosRAT,High,Static analysis
+REM-004,yara_rule,RemcosRAT_Obfuscated_VBS_Loader,Custom YARA rule created from the original obfuscated VBS sample,RemcosRAT,High,Custom static analysis
+REM-005,vbscript_object,Scripting.FileSystemObject,VBScript object used for file operations and self-copy behavior,RemcosRAT,High,Static analysis
+REM-006,vbscript_object,Wscript.Shell,VBScript object used to interact with the Windows shell and environment,RemcosRAT,High,Static analysis
+REM-007,wmi_namespace,winmgmts:\\.\root\cimv2,WMI namespace used to create the hidden PowerShell process,RemcosRAT,High,Static analysis
+REM-008,wmi_class,Win32_ProcessStartup,WMI class used to configure hidden process startup,RemcosRAT,High,Static analysis
+REM-009,wmi_class,Win32_Process,WMI class used to launch the PowerShell process,RemcosRAT,High,Static analysis
+REM-010,powershell_command,"powershell.exe -NoProfile -Command ""Invoke-Expression $env:buckskins""",PowerShell command that executes content stored in the buckskins variable,RemcosRAT,High,Static analysis
+REM-011,powershell_api,New-Object Net.WebClient,PowerShell object used to retrieve remote content,RemcosRAT,High,Static analysis
+REM-012,powershell_api,DownloadData,Method used to download the remote payload container,RemcosRAT,High,Static analysis
+REM-013,decode_function,FromBase64String,Function used to decode the extracted Base64 data,RemcosRAT,High,Static analysis
+REM-014,extraction_marker,IN-,Opening marker used to locate encoded content,RemcosRAT,High,Static analysis
+REM-015,extraction_marker,-in1,Closing marker used to locate encoded content,RemcosRAT,High,Static analysis
+REM-016,dotnet_artifact,CurrentDomain,.NET AppDomain artifact used during in-memory assembly loading,RemcosRAT,High,Static analysis
+REM-017,dotnet_type,OtnmpxnddVnptbN.mpxnddVn,Obfuscated .NET type invoked after assembly loading,RemcosRAT,High,Static analysis
+REM-018,dotnet_method,Otnmpxn,Obfuscated method invoked from the loaded .NET assembly,RemcosRAT,High,Static analysis
+REM-019,downloaded_filename,img_xxdd6n.png,Remote file downloaded by the PowerShell stage,RemcosRAT,High,Static analysis

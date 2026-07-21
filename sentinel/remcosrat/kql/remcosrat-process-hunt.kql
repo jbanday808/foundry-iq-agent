@@ -1,0 +1,227 @@
+let RemcosVbsFile = "WWIvxS4BHi.vbs";
+let RemcosVbsPath = @"C:\Users\Public\Downloads\WWIvxS4BHi.vbs";
+let RemcosEnvironmentVariable = "buckskins";
+let RemcosPowerShellCommand = 'powershell.exe -NoProfile -Command "Invoke-Expression $env:buckskins"';
+let RemcosInvokeEnvironment = "Invoke-Expression $env:";
+let RemcosDownloadedFile = "img_xxdd6n.png";
+let RemcosPowerShell = "powershell.exe";
+let RemcosWscript = "wscript.exe";
+let RemcosCscript = "cscript.exe";
+let RemcosWmiProvider = "wmiprvse.exe";
+let RemcosFileSystemObject = "Scripting.FileSystemObject";
+let RemcosWscriptShell = "Wscript.Shell";
+let RemcosScriptFullName = "WScript.ScriptFullName";
+let RemcosCopyFile = "CopyFile";
+let RemcosCreateObject = "CreateObject";
+let RemcosGetObject = "GetObject";
+let RemcosWmiNamespace = @"winmgmts:\\.\root\cimv2";
+let RemcosProcessStartup = "Win32_ProcessStartup";
+let RemcosProcessClass = "Win32_Process";
+let RemcosHiddenWindow = "ShowWindow = 0";
+let RemcosNetWebClient = "New-Object Net.WebClient";
+let RemcosDownloadData = "DownloadData";
+let RemcosBase64Decode = "FromBase64String";
+let RemcosArrayReverse = "[Array]::Reverse";
+let RemcosCurrentDomain = "CurrentDomain";
+let RemcosGetMethod = "GetMethod";
+let RemcosOpeningMarker = "IN-";
+let RemcosClosingMarker = "-in1";
+let RemcosDotNetType = "OtnmpxnddVnptbN.mpxnddVn";
+let RemcosDotNetMethod = "Otnmpxn";
+DeviceProcessEvents
+| where Timestamp >= ago(30d)
+| extend NormalizedFileName = tolower(FileName),
+         NormalizedFolderPath = tolower(FolderPath),
+         NormalizedCommandLine = tolower(ProcessCommandLine),
+         NormalizedInitiatingFileName = tolower(InitiatingProcessFileName),
+         NormalizedInitiatingFolderPath = tolower(InitiatingProcessFolderPath),
+         NormalizedInitiatingCommandLine = tolower(InitiatingProcessCommandLine)
+| extend CombinedCommandLine = strcat(NormalizedCommandLine, " ", NormalizedInitiatingCommandLine)
+| extend IsVbsFullPath = NormalizedFolderPath == tolower(RemcosVbsPath)
+             or CombinedCommandLine contains tolower(RemcosVbsPath),
+         IsVbsFilename = NormalizedFileName == tolower(RemcosVbsFile)
+             or CombinedCommandLine contains tolower(RemcosVbsFile),
+         IsWscriptVbs = (NormalizedFileName == tolower(RemcosWscript)
+                 or NormalizedInitiatingFileName == tolower(RemcosWscript))
+             and CombinedCommandLine contains ".vbs",
+         IsCscriptVbs = (NormalizedFileName == tolower(RemcosCscript)
+                 or NormalizedInitiatingFileName == tolower(RemcosCscript))
+             and CombinedCommandLine contains ".vbs",
+         IsBuckskinsPowerShell = NormalizedFileName == tolower(RemcosPowerShell)
+             and NormalizedCommandLine contains tolower(RemcosEnvironmentVariable),
+         IsExactPowerShellCommand = NormalizedCommandLine contains tolower(RemcosPowerShellCommand),
+         IsInvokeExpressionEnvironment = NormalizedFileName == tolower(RemcosPowerShell)
+             and NormalizedCommandLine contains "invoke-expression"
+             and NormalizedCommandLine contains "$env:",
+         IsWmiLaunchedPowerShell = NormalizedFileName == tolower(RemcosPowerShell)
+             and NormalizedInitiatingFileName == tolower(RemcosWmiProvider),
+         IsWmiNamespace = CombinedCommandLine contains tolower(RemcosWmiNamespace),
+         IsWmiProcessStartup = CombinedCommandLine contains tolower(RemcosProcessStartup),
+         IsWmiProcessClass = CombinedCommandLine contains tolower(RemcosProcessClass),
+         IsHiddenWindow = CombinedCommandLine contains tolower(RemcosHiddenWindow),
+         IsNetWebClient = CombinedCommandLine contains tolower(RemcosNetWebClient),
+         IsDownloadData = CombinedCommandLine contains tolower(RemcosDownloadData),
+         IsBase64Decode = CombinedCommandLine contains tolower(RemcosBase64Decode),
+         IsArrayReverse = CombinedCommandLine contains tolower(RemcosArrayReverse),
+         IsCurrentDomain = CombinedCommandLine contains tolower(RemcosCurrentDomain),
+         IsGetMethod = CombinedCommandLine contains tolower(RemcosGetMethod),
+         IsDotNetType = CombinedCommandLine contains tolower(RemcosDotNetType),
+         IsDotNetMethod = CombinedCommandLine contains tolower(RemcosDotNetMethod),
+         IsDownloadedFile = CombinedCommandLine contains tolower(RemcosDownloadedFile),
+         IsOpeningMarker = CombinedCommandLine contains tolower(RemcosOpeningMarker),
+         IsClosingMarker = CombinedCommandLine contains tolower(RemcosClosingMarker),
+         IsFileSystemObject = CombinedCommandLine contains tolower(RemcosFileSystemObject),
+         IsWscriptShell = CombinedCommandLine contains tolower(RemcosWscriptShell),
+         IsScriptFullName = CombinedCommandLine contains tolower(RemcosScriptFullName),
+         IsCopyFile = CombinedCommandLine contains tolower(RemcosCopyFile),
+         IsCreateObject = CombinedCommandLine contains tolower(RemcosCreateObject),
+         IsGetObject = CombinedCommandLine contains tolower(RemcosGetObject)
+| extend HighRiskPowerShellArtifactCount =
+    iff(IsNetWebClient, 1, 0)
+    + iff(IsDownloadData, 1, 0)
+    + iff(IsBase64Decode, 1, 0)
+    + iff(IsArrayReverse, 1, 0)
+    + iff(IsCurrentDomain, 1, 0)
+    + iff(IsGetMethod, 1, 0)
+| where IsVbsFullPath
+    or IsVbsFilename
+    or IsWscriptVbs
+    or IsCscriptVbs
+    or IsBuckskinsPowerShell
+    or IsExactPowerShellCommand
+    or IsInvokeExpressionEnvironment
+    or IsWmiLaunchedPowerShell
+    or IsWmiNamespace
+    or IsWmiProcessStartup
+    or IsWmiProcessClass
+    or IsHiddenWindow
+    or IsNetWebClient
+    or IsDownloadData
+    or IsBase64Decode
+    or IsArrayReverse
+    or IsCurrentDomain
+    or IsGetMethod
+    or IsDotNetType
+    or IsDotNetMethod
+    or IsDownloadedFile
+    or IsOpeningMarker
+    or IsClosingMarker
+    or IsFileSystemObject
+    or IsWscriptShell
+    or IsScriptFullName
+    or IsCopyFile
+    or IsCreateObject
+    or IsGetObject
+| extend MatchType = case(
+    IsVbsFullPath, "Remcos VBS Full Path",
+    IsVbsFilename, "Remcos VBS Filename",
+    IsWmiLaunchedPowerShell, "WMI-Launched PowerShell",
+    IsBuckskinsPowerShell and IsInvokeExpressionEnvironment, "Buckskins Environment Variable",
+    IsExactPowerShellCommand, "Buckskins Environment Variable",
+    IsBuckskinsPowerShell, "Buckskins Environment Variable",
+    IsInvokeExpressionEnvironment, "Invoke-Expression Environment Variable",
+    IsWscriptVbs or IsCscriptVbs, "Script Interpreter VBS Execution",
+    IsDotNetType, "Obfuscated .NET Type",
+    IsDotNetMethod, "Obfuscated .NET Method",
+    IsWmiProcessStartup, "WMI Process Startup Artifact",
+    IsHiddenWindow, "Hidden Window Artifact",
+    IsNetWebClient, "Net.WebClient Artifact",
+    IsDownloadData, "DownloadData Artifact",
+    IsBase64Decode, "Base64 Decode Artifact",
+    IsArrayReverse, "Array Reverse Artifact",
+    IsCurrentDomain, ".NET CurrentDomain Artifact",
+    IsGetMethod, "Reflection GetMethod Artifact",
+    IsWmiNamespace or IsWmiProcessClass, "WMI Process Artifact",
+    IsDownloadedFile, "Downloaded Filename Artifact",
+    IsOpeningMarker or IsClosingMarker, "Extraction Marker Artifact",
+    "VBScript Object Artifact")
+| extend MatchedArtifact = case(
+    IsVbsFullPath, RemcosVbsPath,
+    IsVbsFilename, RemcosVbsFile,
+    IsWmiLaunchedPowerShell, RemcosWmiProvider,
+    IsBuckskinsPowerShell and IsInvokeExpressionEnvironment, RemcosEnvironmentVariable,
+    IsExactPowerShellCommand, RemcosPowerShellCommand,
+    IsBuckskinsPowerShell, RemcosEnvironmentVariable,
+    IsInvokeExpressionEnvironment, RemcosInvokeEnvironment,
+    IsWscriptVbs, RemcosWscript,
+    IsCscriptVbs, RemcosCscript,
+    IsDotNetType, RemcosDotNetType,
+    IsDotNetMethod, RemcosDotNetMethod,
+    IsWmiProcessStartup, RemcosProcessStartup,
+    IsHiddenWindow, RemcosHiddenWindow,
+    IsNetWebClient, RemcosNetWebClient,
+    IsDownloadData, RemcosDownloadData,
+    IsBase64Decode, RemcosBase64Decode,
+    IsArrayReverse, RemcosArrayReverse,
+    IsCurrentDomain, RemcosCurrentDomain,
+    IsGetMethod, RemcosGetMethod,
+    IsWmiNamespace, RemcosWmiNamespace,
+    IsWmiProcessClass, RemcosProcessClass,
+    IsDownloadedFile, RemcosDownloadedFile,
+    IsOpeningMarker, RemcosOpeningMarker,
+    IsClosingMarker, RemcosClosingMarker,
+    IsFileSystemObject, RemcosFileSystemObject,
+    IsWscriptShell, RemcosWscriptShell,
+    IsScriptFullName, RemcosScriptFullName,
+    IsCopyFile, RemcosCopyFile,
+    IsCreateObject, RemcosCreateObject,
+    IsGetObject, RemcosGetObject,
+    "")
+| extend InvestigationPriority = case(
+    IsVbsFullPath or IsVbsFilename, "High",
+    IsWmiLaunchedPowerShell, "High",
+    IsBuckskinsPowerShell or IsExactPowerShellCommand, "High",
+    HighRiskPowerShellArtifactCount >= 2, "High",
+    "Medium")
+| extend RiskScore = case(
+    IsVbsFullPath or IsVbsFilename, 90,
+    IsWmiLaunchedPowerShell, 90,
+    IsBuckskinsPowerShell and IsInvokeExpressionEnvironment, 85,
+    IsExactPowerShellCommand, 85,
+    HighRiskPowerShellArtifactCount >= 2, 80,
+    IsBuckskinsPowerShell, 75,
+    IsNetWebClient or IsDownloadData, 75,
+    IsBase64Decode or IsCurrentDomain, 70,
+    IsArrayReverse or IsGetMethod or IsDotNetType or IsDotNetMethod, 70,
+    IsWmiNamespace or IsWmiProcessStartup or IsWmiProcessClass or IsHiddenWindow, 65,
+    IsWscriptVbs or IsCscriptVbs, 65,
+    IsDownloadedFile or IsOpeningMarker or IsClosingMarker, 60,
+    60)
+| extend EvidenceClassification = "Behavioral Similarity",
+         MalwareFamily = "RemcosRAT"
+| project Timestamp,
+          DeviceName,
+          DeviceId,
+          ActionType,
+          FileName,
+          FolderPath,
+          ProcessCommandLine,
+          ProcessId,
+          SHA256,
+          SHA1,
+          MD5,
+          AccountName,
+          AccountDomain,
+          AccountSid,
+          ProcessIntegrityLevel,
+          ProcessTokenElevation,
+          InitiatingProcessFileName,
+          InitiatingProcessFolderPath,
+          InitiatingProcessCommandLine,
+          InitiatingProcessId,
+          InitiatingProcessParentFileName,
+          InitiatingProcessSHA256,
+          InitiatingProcessSHA1,
+          InitiatingProcessMD5,
+          InitiatingProcessAccountName,
+          InitiatingProcessAccountDomain,
+          InitiatingProcessIntegrityLevel,
+          InitiatingProcessTokenElevation,
+          MatchType,
+          MatchedArtifact,
+          EvidenceClassification,
+          MalwareFamily,
+          InvestigationPriority,
+          RiskScore,
+          ReportId
+| order by RiskScore desc, Timestamp desc

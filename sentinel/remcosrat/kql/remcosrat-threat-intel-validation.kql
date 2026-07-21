@@ -1,0 +1,94 @@
+let ExpectedIndicators = datatable(
+    ExpectedIndicatorType:string,
+    ExpectedIndicatorValue:string
+)
+[
+    "sha256", "356106324c797ba967a2a8cde2156e866fe008332046747866efa82a99e62083",
+    "sha1", "7e6fc1213ce2ca016d2d577d09a0c91d9f47a533",
+    "md5", "4713cea293132831a83cdb6ecf9d7637",
+    "domain", "nameless-scene-7204.uploadeeeesclientess.workers.dev",
+    "url", "https://nameless-scene-7204.uploadeeeesclientess.workers.dev/9VKJ-WXKE-YYQN-63FX/img_xxdd6n.png"
+];
+let LatestThreatIntel =
+    ThreatIntelIndicators
+    | summarize arg_max(TimeGenerated, *) by Id
+    | extend ObservableKey = tostring(ObservableKey),
+             ObservableValue = tostring(ObservableValue),
+             Pattern = tostring(Pattern),
+             Name = tostring(Data.name),
+             Description = tostring(Data.description),
+             Tags = tostring(Tags),
+             SourceSystem = tostring(SourceSystem)
+    | extend NormalizedObservableValue = tolower(ObservableValue),
+             NormalizedPatternValue = tolower(extract(@"=\s*'([^']+)'", 1, Pattern))
+    | extend NormalizedComparableValue = iff(
+        isnotempty(NormalizedObservableValue),
+        NormalizedObservableValue,
+        NormalizedPatternValue)
+    | project Id,
+              NormalizedComparableValue,
+              ObservableKey,
+              ObservableValue,
+              Pattern,
+              Name,
+              Description,
+              Confidence,
+              Tags,
+              SourceSystem,
+              ValidFrom,
+              ValidUntil,
+              IsActive,
+              IsDeleted,
+              Revoked,
+              TimeGenerated;
+ExpectedIndicators
+| extend NormalizedExpectedValue = tolower(ExpectedIndicatorValue)
+| join kind=leftouter LatestThreatIntel on $left.NormalizedExpectedValue == $right.NormalizedComparableValue
+| extend ValidationStatus = iff(isnotempty(Id), "Present", "Missing")
+| extend ValidityStatus = case(
+    ValidationStatus == "Missing", "Missing",
+    IsDeleted == true, "Deleted",
+    Revoked == true, "Revoked",
+    IsActive == false, "Inactive",
+    isnotnull(ValidFrom) and ValidFrom > now(), "Not Yet Valid",
+    isnull(ValidUntil), "No Expiration Provided",
+    ValidUntil < now(), "Expired",
+    "Active")
+| extend RequiresReview = not(
+    ValidationStatus == "Present"
+    and coalesce(IsDeleted, false) == false
+    and coalesce(Revoked, false) == false
+    and coalesce(IsActive, false) == true
+    and ValidityStatus in ("Active", "No Expiration Provided"))
+| extend IndicatorClassification = "Threat Intelligence IOC",
+         MalwareFamily = "RemcosRAT"
+| extend ValidationNote = case(
+    ValidationStatus == "Missing", "Indicator not found in ThreatIntelIndicators",
+    IsDeleted == true, "Indicator found in ThreatIntelIndicators but marked deleted",
+    Revoked == true, "Indicator found in ThreatIntelIndicators but revoked",
+    IsActive == false, "Indicator found in ThreatIntelIndicators but inactive",
+    ValidityStatus == "Expired", "Indicator found in ThreatIntelIndicators but expired",
+    ValidityStatus == "Not Yet Valid", "Indicator found in ThreatIntelIndicators but not yet valid",
+    "Indicator found in ThreatIntelIndicators")
+| project ExpectedIndicatorType,
+          ExpectedIndicatorValue,
+          ValidationStatus,
+          IndicatorClassification,
+          MalwareFamily,
+          ObservableKey,
+          ObservableValue,
+          Pattern,
+          Name,
+          Description,
+          Confidence,
+          Tags,
+          SourceSystem,
+          ValidFrom,
+          ValidUntil,
+          ValidityStatus,
+          IsDeleted,
+          TimeGenerated,
+          Id,
+          RequiresReview,
+          ValidationNote
+| order by ValidationStatus asc, ExpectedIndicatorType asc

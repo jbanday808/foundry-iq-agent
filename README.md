@@ -1,1910 +1,390 @@
 # Build Knowledge-Enhanced AI Agents with Foundry IQ
 
+This repository demonstrates how Microsoft Foundry IQ, Azure AI Search, Microsoft Sentinel, Microsoft Defender XDR, and structured security knowledge can support an AI-powered enterprise knowledge and threat-hunting assistant. The project began as an enterprise knowledge assistant and was extended with an authorized RemcosRAT malware-analysis and Microsoft Sentinel threat-hunting use case.
+
+> In simple terms, the project demonstrates an AI assistant that can search approved information, explain security evidence, and help analysts investigate suspicious activity without making unsupported claims.
+
+---
+
 ## Project Overview
 
-This project provides a complete step-by-step guide for building a knowledge-enhanced AI agent using Microsoft Foundry IQ, Azure AI Search, Azure AI Projects SDK, Azure Identity, and a connected enterprise knowledge base.
+| Area | Capability |
+|---|---|
+| Enterprise Knowledge | Searches connected organizational documents |
+| Grounded AI | Uses approved knowledge sources before answering |
+| Microsoft Foundry IQ | Hosts and manages the AI agent |
+| Azure AI Search | Retrieves relevant enterprise content |
+| Microsoft Sentinel | Stores threat intelligence and supports hunting |
+| Microsoft Defender XDR | Provides endpoint, process, file, and network telemetry |
+| Threat Hunting | Searches exact IOCs and related behavior |
+| Validation | Tests accuracy, consistency, and safety |
 
-The goal is to create an enterprise AI assistant capable of:
-
-* Searching enterprise knowledge sources
-* Retrieving relevant information
-* Answering questions accurately
-* Summarizing uploaded documents
-* Providing grounded responses
-* Reducing unsupported AI-generated content
-* Integrating with Azure AI Search
-
----
-
-## Business Objectives
-
-Organizations often store critical information across documents, policies, procedures, and knowledge repositories.
-
-This project demonstrates how to:
-
-* Build an enterprise knowledge assistant
-* Connect AI agents to organizational knowledge
-* Improve information discovery
-* Reduce manual searches
-* Enhance response accuracy
-* Provide secure access to enterprise content
+The repository combines implementation guidance, a Python SDK example, validation evidence, AI-agent prompts, malware-analysis knowledge, STIX threat intelligence, a behavioral watchlist, and reviewable KQL hunts.
 
 ---
 
-## Architecture Overview
+## Project Objectives
 
-### Solution Components
+- Build a grounded enterprise AI assistant
+- Connect the agent to approved knowledge
+- Support Microsoft Sentinel and Defender investigations
+- Validate IOCs without assuming compromise
+- Generate reviewable KQL threat hunts
+- Maintain human analyst control
 
-The solution consists of the following Azure services and components:
-
-| Component             | Purpose                       |
-| --------------------- | ----------------------------- |
-| Microsoft Foundry IQ  | AI Agent Platform             |
-| Azure AI Search       | Enterprise Search Engine      |
-| Knowledge Base        | Enterprise Content Repository |
-| Azure AI Projects SDK | Agent Connectivity            |
-| Azure Identity        | Authentication                |
-| Azure CLI             | Azure Administration          |
-| Python                | Automation and Testing        |
+For non-technical readers, grounding means the assistant checks approved source material before responding. It helps the AI explain what is known, what is only suspected, and what still requires investigation.
 
 ---
 
-## High-Level Architecture
+## Solution Architecture
+
+![Microsoft Foundry IQ Architecture](images/Azure-AI-Foundry-Diagram.png)
 
 ```text
 User
- │
- ▼
-Enterprise Knowledge Agent
- │
- ▼
-Microsoft Foundry IQ
- │
- ▼
-Knowledge Base
- │
- ▼
-Azure AI Search
- │
- ▼
-Enterprise Documents
- │
- ▼
-Response Returned to User
+  ↓
+Microsoft Foundry IQ Agent
+  ↓
+Approved Knowledge and Azure AI Search
+  ↓
+Microsoft Sentinel and Defender XDR Evidence
+  ↓
+Grounded Investigation Response
+  ↓
+Human Analyst Review
 ```
 
----
-
-## Figure 1: Azure AI Foundry End-to-End Workflow
-
-Description:
-
-Illustrates the complete Microsoft Foundry IQ workflow from resource creation through AI agent deployment, knowledge integration, testing, and validation.
-
-References:
-
-AWS Pricing Calculator User Guide: This guide provides detailed instructions on using the AWS Pricing Calculator to estimate costs for different AWS services.
-
-![Azure AI Foundry Workflow](images/Azure-AI-Foundry-Diagram.png)
-
----
-
-## Folder Structure
-
-```text
-foundry-iq-agent/
-│
-├── README.md
-│
-├── images/
-│   ├── Azure-AI-Foundry-Diagram.png
-│   ├── enterprise-knowledge-agent-test-01.png
-│   ├── enterprise-knowledge-agent-test-02.png
-│   ├── enterprise-knowledge-agent-output.png
-│   ├── run_agent.py.png
-│   └── output-run-agent.py.png
-│
-└── src/
-    ├── architecture.md
-    ├── deployment-guide.md
-    ├── index.html
-    ├── lessons-learned.md
-    ├── security-controls.md
-    └── run_agent.py
-```
-
----
-
-## Folder Overview
-
-| Folder/File          | Description                        |
-| -------------------- | ---------------------------------- |
-| README.md            | Main project documentation         |
-| images               | Screenshots and validation results |
-| architecture.md      | Solution architecture              |
-| deployment-guide.md  | Deployment procedures              |
-| lessons-learned.md   | Findings and recommendations       |
-| security-controls.md | Security requirements              |
-| run_agent.py         | Python SDK integration example     |
-
----
-
-# GitHub Repository Setup
-
-## Step 1: Create the GitHub Repository
-
-Go to:
-
-```text
-https://github.com/jbanday808?tab=repositories
-```
-
-Select:
-
-```text
-New
-```
-
-Repository Name:
-
-```text
-foundry-iq-agent
-```
-
-Description:
-
-```text
-Build Knowledge-Enhanced AI Agents with Foundry IQ, Azure AI Search, Azure AI Projects SDK, and Enterprise Knowledge Bases.
-```
-
-Visibility:
-
-```text
-Public
-```
-
-License:
-
-```text
-MIT License
-```
-
-Click:
-
-```text
-Create Repository
-```
-
----
-
-## Step 2: Clone the GitHub Repository
-
-### Command Overview
-
-Command:
-
-```powershell
-git clone https://github.com/jbanday808/foundry-iq-agent.git
-```
-
-Explanation:
-
-* git clone: Downloads a GitHub repository.
-* URL: Repository location.
-
-Summary:
-
-Downloads the Foundry IQ repository to the local workstation.
-
----
-
-### Command Overview
-
-Command:
-
-```powershell
-cd foundry-iq-agent
-```
-
-Explanation:
-
-* cd: Changes directory.
-* foundry-iq-agent: Repository folder.
-
-Summary:
-
-Navigates into the project directory.
-
----
-
-# Microsoft Foundry Deployment
-
-## Step 3: Create Microsoft Foundry Resource
-
-Open Azure Portal:
-
-```text
-https://portal.azure.com
-```
-
-Search:
-
-```text
-Foundry
-```
-
-Select:
-
-```text
-Create a Resource
-```
-
-Resource Group:
-
-```text
-Sentinel-RG
-```
-
-Resource Name:
-
-```text
-foundry-iq-jbanday
-```
-
-Region:
-
-```text
-East US
-```
-
-Project Name:
-
-```text
-proj-default
-```
-
-Select:
-
-```text
-Review + Create
-```
-
-Then:
-
-```text
-Create
-```
-
----
-
-## Step 4: Launch Microsoft Foundry
-
-Select:
-
-```text
-foundry-iq-jbanday/proj-default
-```
-
-Click:
-
-```text
-Go to Foundry Portal
-```
-
----
-
-## Step 5: Enable New Foundry Experience
-
-At the top of the portal:
-
-Enable:
-
-```text
-New Foundry
-```
-
----
-
-## Step 6: Create AI Agent
-
-Select:
-
-```text
-Start Building
-```
-
-Agent Name:
-
-```text
-enterprise-knowledge-agent
-```
-
-Click:
-
-```text
-Create
-```
-
----
-
-## Step 7: Configure Agent Instructions
-
-Paste the following instructions:
-
-```text
-You are an enterprise knowledge assistant.
-
-Use the connected knowledge base to answer questions accurately.
-
-Always search the knowledge base before responding.
-
-Provide concise and professional answers.
-
-Include citations when available.
-
-If the requested information is not found in the knowledge base, respond:
-
-"I don't know based on the available knowledge sources."
-
-Do not make assumptions or generate unsupported information.
-```
-
----
-
-# Azure AI Search Deployment
-
-## Step 8: Create Azure AI Search
-
-Return to Azure Portal.
-
-Search:
-
-```text
-AI Search
-```
-
-Click:
-
-```text
-Create
-```
-
-Resource Group:
-
-```text
-Sentinel-RG
-```
-
-Service Name:
-
-```text
-caremedix-search
-```
-
-Region:
-
-```text
-East US
-```
-
-Click:
-
-```text
-Review + Create
-```
-
-Then:
-
-```text
-Create
-```
-
----
-
-# Knowledge Base Configuration
-
-## Step 9: Create Knowledge Base
-
-Navigate to:
-
-```text
-Knowledge
-```
-
-Select:
-
-```text
-Add
-```
-
-Choose:
-
-```text
-Connect to Foundry IQ
-```
-
-Foundry Resource:
-
-```text
-caremedix-search
-```
-
-Authentication:
-
-```text
-API Key
-```
-
-Click:
-
-```text
-Connect
-```
-
-Knowledge Base Name:
-
-```text
-enterprise-kb
-```
-
-Description:
-
-```text
-Enterprise knowledge base for policies, procedures, technical documentation, and business information.
-```
-
-Embedding Model:
-
-```text
-text-embedding-3-small
-```
-
-Click:
-
-```text
-Create
-```
-
----
-
-## Step 10: Connect Knowledge Base to Agent
-
-Navigate to:
-
-```text
-Agents
-```
-
-Select:
-
-```text
-enterprise-knowledge-agent
-```
-
-Under Knowledge:
-
-```text
-Add
-```
-
-Choose:
-
-```text
-Connect to Foundry IQ
-```
-
-Select:
-
-```text
-knowledgebase42
-```
-
-Click:
-
-```text
-Connect
-```
-
-Then:
-
-```text
-Save
-```
-
-Finally:
-
-```text
-Publish
-```
-
----
-
-## Validation Test #1
-
-Question:
-
-```text
-What is the service name of the Azure AI Search resource?
-```
-
-Expected Response:
-
-```text
-caremedix-search
-```
-
----
-
-## Validation Test #2
-
-Question:
-
-```text
-Summarize the uploaded document.
-```
-
-Expected Result:
-
-The agent successfully summarizes the uploaded enterprise document using Azure AI Search and the connected knowledge base.
-
----
-
-## Screenshots
-
-### Figure 2: Azure AI Search Validation
-
-Description:
-
-Shows the enterprise-knowledge-agent successfully retrieving the Azure AI Search service name from the connected knowledge base.
-
-![Azure AI Search Validation](images/enterprise-knowledge-agent-test-01.png)
-
----
-
-### Figure 3: Resource Validation
-
-Description:
-
-Shows the enterprise-knowledge-agent successfully identifying the Azure Resource Group and deployment region.
-
-![Resource Validation](images/enterprise-knowledge-agent-test-02.png)
-```
-
----
-
-### Figure 4: Document Summarization Validation
-
-Description:
-
-Demonstrates successful document summarization using the connected enterprise knowledge base.
-
-![Document Summarization](images/enterprise-knowledge-agent-output.png)
-```
-
----
-
-# PowerShell, Python, and Azure Configuration
-
-## Step 11: Open PowerShell
-
-Open PowerShell as Administrator.
-
-### Procedure
-
-1. Open Windows Search.
-2. Type:
-
-```text
-PowerShell
-```
-
-3. Right-click:
-
-```text
-Windows PowerShell
-```
-
-4. Select:
-
-```text
-Run as Administrator
-```
-
----
-
-## Figure 5: PowerShell Environment
-
-Description:
-
-Shows the PowerShell environment used to deploy and test the Foundry IQ solution.
-
-![PowerShell Environment](images/output-run-agent.py.png)
-```
-
----
-
-# Project Folder Creation
-
-## Step 12: Create Project Folder
-
-### Command Overview
-
-Command:
-
-```powershell
-mkdir foundry-agent-test
-```
-
-Explanation:
-
-* mkdir: Creates a directory.
-* foundry-agent-test: Project folder name.
-
-Summary:
-
-Creates the local Foundry IQ project directory.
-
----
-
-### Command Overview
-
-Command:
-
-```powershell
-cd foundry-agent-test
-```
-
-Explanation:
-
-* cd: Changes directory.
-* foundry-agent-test: Target folder.
-
-Summary:
-
-Navigates into the project directory.
-
----
-
-# Python Installation
-
-## Step 13: Install Python
-
-Download:
-
-```text
-Python 3.14.x (64-bit)
-```
-
-Official Download Page:
-
-```text
-https://www.python.org/downloads/windows/
-```
-
-### Installation Options
-
-Select:
-
-```text
-Install Now
-```
-
-Enable:
-
-```text
-Disable Path Length Limit
-```
-
-### Verify Installation
-
-#### Command Overview
-
-Command:
-
-```powershell
-python --version
-```
-
-Explanation:
-
-* python: Python interpreter.
-* --version: Displays version.
-
-Summary:
-
-Verifies Python installation.
-
----
-
-# Azure AI Projects SDK Installation
-
-## Step 14: Install Foundry SDK
-
-### Command Overview
-
-Command:
-
-```powershell
-pip install azure-ai-projects azure-identity
-```
-
-Explanation:
-
-* pip install: Installs Python packages.
-* azure-ai-projects: Azure AI Projects SDK.
-* azure-identity: Azure authentication library.
-
-Summary:
-
-Installs the required Azure SDK packages.
-
----
-
-### Command Overview
-
-Command:
-
-```powershell
-python.exe -m pip install --upgrade pip
-```
-
-Explanation:
-
-* python.exe: Executes Python.
-* -m pip: Runs pip module.
-* --upgrade: Updates package.
-* pip: Python package manager.
-
-Summary:
-
-Upgrades pip to the latest version.
-
----
-
-# Python SDK Integration
-
-## Step 15: Create run_agent.py
-
-Create:
-
-```text
-run_agent.py
-```
-
----
-
-# Python Script Walkthrough
-
-## Full Script
-
-```python
-# Before running this script, install the required packages:
-# pip install azure-ai-projects>=2.1.0 azure-identity
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-
-
-# Azure AI Foundry project endpoint
-endpoint = "https://foundry-iq-jbanday.services.ai.azure.com/api/projects/proj-default"
-
-
-# Create the Azure AI Project client
-project_client = AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(),
-)
-
-
-# Foundry IQ agent configuration
-my_agent = "enterprise-knowledge-agent"
-my_version = "5"
-
-
-# Create OpenAI client from Azure AI Project
-openai_client = project_client.get_openai_client()
-
-
-# Validation questions
-questions = [
-    "What is the service name of the Azure AI Search resource?",
-    "What resource group was used?",
-    "What region was selected?",
-    "What is the name of the agent?",
-    "Summarize the uploaded document.",
-]
-
-
-# Run validation tests
-for question in questions:
-    response = openai_client.responses.create(
-        input=[
-            {
-                "role": "user",
-                "content": question,
-            }
-        ],
-        extra_body={
-            "agent_reference": {
-                "name": my_agent,
-                "version": my_version,
-                "type": "agent_reference",
-            }
-        },
-    )
-
-    print("\n----------------------------------------")
-    print(f"Question: {question}")
-    print(f"Response output: {response.output_text}")
-```
-
----
-
-## Script Breakdown
-
-### Package Installation
-
-```python
-# pip install azure-ai-projects>=2.1.0 azure-identity
-```
-
-**Explanation:**
-
-Installs the software libraries needed for the script to communicate with Microsoft Foundry IQ and securely access Azure resources.
-
----
-
-### Import Required Libraries
-
-```python
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-```
-
-**Explanation:**
-
-Imports the Azure tools used to securely sign in and connect to the Microsoft Foundry IQ project.
-
----
-
-### Foundry IQ Project Endpoint
-
-```python
-endpoint = "https://foundry-iq-jbanday.services.ai.azure.com/api/projects/proj-default"
-```
-
-**Explanation:**
-
-Specifies the Microsoft Foundry IQ project that the script will connect to.
-
----
-
-### Create Azure AI Project Client
-
-```python
-project_client = AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(),
-)
-```
-
-**Explanation:**
-
-Creates a secure connection to the Foundry IQ project using the Azure account currently signed in on the computer.
-
----
-
-### Agent Configuration
-
-```python
-my_agent = "enterprise-knowledge-agent"
-my_version = "5"
-```
-
-**Explanation:**
-
-Identifies which AI agent and version the script should use when asking questions.
-
----
-
-### Create OpenAI Client
-
-```python
-openai_client = project_client.get_openai_client()
-```
-
-**Explanation:**
-
-Creates the communication channel used to send questions to the AI agent and receive responses.
-
----
-
-### Validation Questions
-
-```python
-questions = [
-    "What is the service name of the Azure AI Search resource?",
-    "What resource group was used?",
-    "What region was selected?",
-    "What is the name of the agent?",
-    "Summarize the uploaded document.",
-]
-```
-
-**Explanation:**
-
-Creates a list of test questions used to verify that the AI agent is working correctly and can retrieve information from the connected knowledge base.
-
----
-
-### Run Validation Tests
-
-```python
-for question in questions:
-```
-
-**Explanation:**
-
-Starts a loop that sends each question to the AI agent one at a time.
-
----
-
-### Submit the Question
-
-```python
-response = openai_client.responses.create(
-```
-
-**Explanation:**
-
-Submits a question to the AI agent and waits for a response.
-
----
-
-### User Input
-
-```python
-input=[
-    {
-        "role": "user",
-        "content": question,
-    }
-]
-```
-
-**Explanation:**
-
-Formats the question as if it were entered by a user in the Foundry IQ chat window.
-
----
-
-### Agent Reference
-
-```python
-extra_body={
-    "agent_reference": {
-        "name": my_agent,
-        "version": my_version,
-        "type": "agent_reference",
-    }
-}
-```
-
-**Explanation:**
-
-Tells Foundry IQ exactly which AI agent should answer the question.
-
----
-
-### Display Results
-
-```python
-print("\n----------------------------------------")
-print(f"Question: {question}")
-print(f"Response output: {response.output_text}")
-```
-
-**Explanation:**
-
-Displays the question and the AI agent's answer on the screen so the results can be reviewed.
-
----
-
-## Expected Output
-
-```text
-----------------------------------------
-Question: What is the service name of the Azure AI Search resource?
-
-Response output:
-caremedix-search
-
-----------------------------------------
-Question: What resource group was used?
-
-Response output:
-Sentinel-RG
-
-----------------------------------------
-Question: What region was selected?
-
-Response output:
-East US
-```
-
----
-
-## Summary
-
-This script connects to Microsoft Foundry IQ, sends validation questions to the **enterprise-knowledge-agent**, retrieves answers from the connected knowledge base, and displays the results to verify that the AI agent is functioning correctly.
-
-
----
-
-## Figure 6: Python SDK Integration
-
-Description:
-
-Displays the Python SDK code used to connect to Microsoft Foundry IQ and interact with the enterprise knowledge agent.
-
-
-![Python SDK Integration](images/run_agent.py.png)
-# Azure CLI Installation
-
-## Step 16: Install Azure CLI
-
-Documentation:
-
-https://learn.microsoft.com/cli/azure/install-azure-cli-windows
-
-### Verify Installation
-
-#### Command Overview
-
-Command:
-
-```powershell
-az version
-```
-
-Explanation:
-
-* az: Azure CLI.
-* version: Displays installed version.
-
-Summary:
-
-Verifies Azure CLI installation.
-
----
-
-# Azure Authentication
-
-## Step 17: Sign In to Azure
-
-### Command Overview
-
-Command:
-
-```powershell
-az login
-```
-
-Explanation:
-
-* az: Azure CLI.
-* login: Authenticates to Azure.
-
-Summary:
-
-Signs into Azure.
-
----
-
-### Verify Authentication
-
-#### Command Overview
-
-Command:
-
-```powershell
-az account show
-```
-
-Explanation:
-
-* az account: Azure account information.
-* show: Displays active subscription.
-
-Summary:
-
-Verifies Azure authentication.
-
----
-
-# Virtual Environment Configuration
-
-## Step 18: Create Virtual Environment
-
-### Verify Python Installation
-
-#### Command Overview
-
-Command:
-
-```powershell
-& "$env:LOCALAPPDATA\Programs\Python\Python314\python.exe" --version
-```
-
-Explanation:
-
-* &: Executes command.
-* python.exe: Python interpreter.
-* --version: Displays version.
-
-Summary:
-
-Verifies Python installation.
-
----
-
-### Create Virtual Environment
-
-#### Command Overview
-
-Command:
-
-```powershell
-& "$env:LOCALAPPDATA\Programs\Python\Python314\python.exe" -m venv venv
-```
-
-Explanation:
-
-* python.exe: Python interpreter.
-* -m venv: Creates virtual environment.
-* venv: Virtual environment folder.
-
-Summary:
-
-Creates a Python virtual environment.
-
----
-
-### Enable PowerShell Script Execution
-
-#### Command Overview
-
-Command:
-
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-Explanation:
-
-* Set-ExecutionPolicy: Modifies PowerShell execution policy.
-* RemoteSigned: Allows local scripts.
-* CurrentUser: Applies to current user.
-
-Summary:
-
-Allows PowerShell virtual environment activation.
-
----
-
-### Activate Virtual Environment
-
-#### Command Overview
-
-Command:
-
-```powershell
-.\venv\Scripts\Activate.ps1
-```
-
-Explanation:
-
-* venv: Virtual environment folder.
-* Activate.ps1: Activation script.
-
-Summary:
-
-Activates the Python virtual environment.
-
----
-
-# Agent Execution
-
-## Step 19: Run the Agent
-
-### Command Overview
-
-Command:
-
-```powershell
-python run_agent.py
-```
-
-Explanation:
-
-* python: Executes Python.
-* run_agent.py: Agent integration script.
-
-Summary:
-
-Runs the enterprise knowledge agent.
-
----
-
-## Expected Output
-
-```text
-----------------------------------------
-Question: What is the service name of the Azure AI Search resource?
-
-Response output:
-caremedix-search
-
-----------------------------------------
-Question: Summarize the uploaded document.
-
-Response output:
-<Document Summary>
-```
-
----
-
-# Agent Validation
-
-## Step 20: Validate Enterprise Knowledge Agent
-
-Open:
-
-```text
-https://ai.azure.com/
-```
-
-Ask:
-
-```text
-What is the name of the agent?
-```
-
-Expected Response:
-
-```text
-enterprise-knowledge-agent
-```
-
----
-
-Ask:
-
-```text
-What resource group was used?
-```
-
-Expected Response:
-
-```text
-Sentinel-RG
-```
+The enterprise workflow retrieves approved organizational knowledge through Azure AI Search. The security workflow adds static-analysis knowledge, threat intelligence, watchlist artifacts, and telemetry searches. The agent supports investigation and reporting, but a human analyst remains responsible for conclusions and operational actions.
 
----
-
-Ask:
-
-```text
-What region was selected?
-```
-
-Expected Response:
-
-```text
-East US
-```
-
----
-
-## Figure 7: Python Execution Results
-
-Description:
-
-Shows successful execution of run_agent.py and validation of responses returned from the enterprise knowledge agent.
-
-
-![Python Execution Results](images/output-run-agent.py.png)
-```
-
----
-
-# Complete Command Reference
-
-## Foundry SDK Commands
-
-```powershell
-pip install azure-ai-projects azure-identity
-python.exe -m pip install --upgrade pip
-```
-
----
-
-## Azure CLI Commands
-
-```powershell
-az version
-az login
-az account show
-```
-
----
-
-## Python Virtual Environment Commands
-
-```powershell
-python -m venv venv
-
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
-.\venv\Scripts\Activate.ps1
-```
-
----
-
-## Python Execution Command
-
-```powershell
-python run_agent.py
-```
-
----
-
-# Validation Testing
-
-## Validation Test Matrix
-
-| Test ID | Validation Item           | Expected Result                       | Status |
-| ------- | ------------------------- | ------------------------------------- | ------ |
-| VT-01   | Azure AI Search Lookup    | caremedix-search returned             | Pass   |
-| VT-02   | Resource Group Validation | Sentinel-RG returned                  | Pass   |
-| VT-03   | Region Validation         | East US returned                      | Pass   |
-| VT-04   | Knowledge Base Retrieval  | Knowledge source referenced           | Pass   |
-| VT-05   | Document Summarization    | Summary successfully generated        | Pass   |
-| VT-06   | Agent Name Validation     | enterprise-knowledge-agent returned   | Pass   |
-| VT-07   | Python SDK Execution      | Agent response displayed              | Pass   |
-| VT-08   | Azure Authentication      | Azure CLI authentication successful   | Pass   |
-| VT-09   | Foundry Agent Connection  | Agent connected successfully          | Pass   |
-| VT-10   | Knowledge Base Connection | Knowledge base connected successfully | Pass   |
-
----
-
-# Validation Questions
-
-## Validation Question 1
-
-Question:
-
-```text
-What is the service name of the Azure AI Search resource?
-```
-
-Expected Response:
-
-```text
-caremedix-search
-```
-
----
-
-## Validation Question 2
-
-Question:
-
-```text
-What resource group was used?
-```
-
-Expected Response:
-
-```text
-Sentinel-RG
-```
-
----
-
-## Validation Question 3
-
-Question:
-
-```text
-What region was selected?
-```
-
-Expected Response:
-
-```text
-East US
-```
-
----
-
-## Validation Question 4
-
-Question:
-
-```text
-What is the name of the agent?
-```
-
-Expected Response:
-
-```text
-enterprise-knowledge-agent
-```
-
----
-
-## Validation Question 5
-
-Question:
-
-```text
-Summarize the uploaded document.
-```
-
-Expected Response:
-
-```text
-Document summary generated from the connected knowledge base.
-```
-
----
-
-# Screenshot Validation
-
-## Figure 8: Azure AI Search Validation
-
-Description:
-
-Shows successful retrieval of the Azure AI Search service name from the connected knowledge base.
-
-![Azure AI Search Validation](images/enterprise-knowledge-agent-test-01.png)
-
----
-
-## Figure 9: Resource Validation
-
-Description:
-
-Shows successful retrieval of deployment resource information from the connected knowledge base.
-
-
-![Resource Validation](images/enterprise-knowledge-agent-test-02.png)
-
----
-
-## Figure 10: Document Summarization Validation
-
-Description:
-
-Shows successful document summarization using the enterprise knowledge base.
-
-![Document Summarization Validation](images/enterprise-knowledge-agent-output.png)
-
----
-
-# Security Controls
-
-## Identity and Access Management
-
-### Azure Authentication
-
-The solution uses Azure authentication through Azure CLI and Azure Identity.
-
-Benefits:
-
-* Secure authentication
-* Role-based access control
-* Enterprise identity integration
-
----
-
-### Azure Identity SDK
-
-Used Component:
-
-```text
-DefaultAzureCredential()
-```
-
-Purpose:
-
-* Secure token acquisition
-* Azure service authentication
-* Managed identity support
+See the full [architecture documentation](src/architecture.md).
 
 ---
 
-## Access Controls
+## Core Technologies
 
-### Knowledge Base Security
+| Technology | Role in the project |
+|---|---|
+| Microsoft Foundry IQ | Agent creation, management, grounding, and interaction |
+| Azure AI Search | Retrieval of relevant content from connected knowledge |
+| Azure AI Projects SDK | Programmatic access to the published agent |
+| Azure Identity | Azure-native authentication through `DefaultAzureCredential` |
+| Python | SDK integration and validation workflow |
+| Microsoft Sentinel | Threat-intelligence storage, watchlists, and hunting |
+| Microsoft Defender XDR | Advanced-hunting telemetry for devices, files, processes, and networks |
+| KQL | Repeatable security searches and validation queries |
+| STIX 2.1 | Portable threat-intelligence indicator packaging |
+| YARA | Static file-pattern detection documented in the malware knowledge |
 
-Controls:
-
-* Azure RBAC
-* API Key Authentication
-* Resource Group Isolation
-* Subscription-Level Security
-
 ---
 
-### Azure AI Search Security
+## Enterprise Knowledge Assistant
 
-Controls:
+The original implementation connects an enterprise knowledge agent to Azure AI Search and an approved knowledge base. Its instruction model emphasizes:
 
-* Search Service Access Control
-* API Key Protection
-* Network Restrictions
-* Azure Authentication
+- Searching connected knowledge before answering
+- Returning concise, professional responses
+- Using citations when available
+- Stating when information is not present
+- Avoiding unsupported assumptions
 
----
+The Python example in [`src/run_agent.py`](src/run_agent.py) uses the Azure AI Projects SDK and `DefaultAzureCredential` to submit validation questions to the configured agent. Environment-specific configuration should be reviewed and sanitized before reuse.
 
-## Secure Development Practices
+### Why It Matters
 
-Implemented Controls:
+Enterprise information is often distributed across policies, procedures, and technical documents. A grounded assistant reduces manual searching and makes answers easier to trace to approved sources.
 
-* No hardcoded passwords
-* No embedded credentials
-* Azure-based authentication
-* Least privilege access
-* Controlled resource access
+Detailed setup is available in the [deployment guide](src/deployment-guide.md).
 
 ---
-
-# Troubleshooting Guide
-
-## Issue: Azure CLI Not Found
-
-Error:
-
-```text
-'az' is not recognized as an internal or external command
-```
 
-Resolution:
+## RemcosRAT Threat-Hunting Extension
 
-Install Azure CLI.
+The security extension converts findings from authorized static analysis of an obfuscated RemcosRAT VBS and PowerShell loader into safe defensive content. It includes:
 
-Verification:
+- Approved malware-analysis knowledge
+- Standard threat-intelligence indicators
+- A STIX 2.1 bundle for later Sentinel import
+- A behavioral-artifact watchlist
+- Hash, network, and process hunts
+- Threat-intelligence import validation
+- IOC-validation and threat-hunting prompts
+- Safe screenshots and investigation documentation
 
-### Command Overview
+The original malware archive, VBS sample, decoded binaries, payloads, credentials, and environment identifiers are not stored in the repository.
 
-Command:
+### Evidence Boundaries
 
-```powershell
-az version
-```
+| Evidence category | Meaning |
+|---|---|
+| Threat Intelligence | A known warning sign associated with the analyzed sample |
+| Static-Analysis Finding | Behavior the sample was designed to perform |
+| Exact Environment Match | The exact indicator appeared in internal telemetry |
+| Behavioral Similarity | Related activity appeared and needs correlation |
+| Confirmed Execution | Internal telemetry supports execution or multiple correlated malicious signals |
 
-Summary:
+Importing an indicator or finding a behavioral term does not prove that a monitored environment was compromised.
 
-Verifies Azure CLI installation.
+Read the complete [RemcosRAT Sentinel integration guide](src/remcosrat/remcosrat-sentinel-integration.md).
 
 ---
-
-## Issue: Python Not Found
-
-Error:
-
-```text
-python is not recognized as an internal or external command
-```
-
-Resolution:
 
-Reinstall Python and enable:
+## RemcosRAT Intelligence and Hunting Assets
 
-```text
-Add Python to PATH
-```
+### Threat Intelligence
 
-Verification:
+The project separates standard threat-intelligence indicators from behavioral artifacts:
 
-### Command Overview
+| Asset | Purpose |
+|---|---|
+| [`remcosrat-iocs.csv`](sentinel/remcosrat/threat-intelligence/remcosrat-iocs.csv) | Source catalog for documented RemcosRAT values |
+| [`remcosrat-stix-bundle.json`](sentinel/remcosrat/threat-intelligence/remcosrat-stix-bundle.json) | STIX 2.1 bundle containing SHA-256, SHA-1, MD5, domain, and URL indicators |
+| [`remcosrat-behavioral-artifacts.csv`](sentinel/remcosrat/watchlists/remcosrat-behavioral-artifacts.csv) | Watchlist data for filenames, paths, commands, WMI, PowerShell, and .NET artifacts |
 
-Command:
+The watchlist alias is `RemcosRATBehavioralArtifacts`, with `artifact_value` as its SearchKey. Watchlist entries are reference data and must be correlated with environment telemetry.
 
-```powershell
-python --version
-```
+### Hunting Queries
 
-Summary:
+| Query | Table | Purpose |
+|---|---|---|
+| [`remcosrat-hash-hunt.kql`](sentinel/remcosrat/kql/remcosrat-hash-hunt.kql) | `DeviceFileEvents` | Searches exact file and initiating-process hashes |
+| [`remcosrat-network-hunt.kql`](sentinel/remcosrat/kql/remcosrat-network-hunt.kql) | `DeviceNetworkEvents` | Searches the documented domain, URL, and downloaded filename |
+| [`remcosrat-process-hunt.kql`](sentinel/remcosrat/kql/remcosrat-process-hunt.kql) | `DeviceProcessEvents` | Searches VBS, PowerShell, WMI, decoding, and in-memory loading behavior |
+| [`remcosrat-threat-intel-validation.kql`](sentinel/remcosrat/kql/remcosrat-threat-intel-validation.kql) | `ThreatIntelIndicators` | Confirms whether expected indicators exist in Sentinel threat intelligence |
 
-Verifies Python installation.
+These queries produce investigation leads, not automatic compromise conclusions. Table availability, field schemas, retention, and permissions must be validated in the target Sentinel or Defender environment.
 
 ---
-
-## Issue: Virtual Environment Activation Fails
-
-Error:
-
-```text
-Running scripts is disabled on this system.
-```
 
-Resolution:
+## AI Threat Hunt Agent Resources
 
-### Command Overview
+| Resource | Purpose |
+|---|---|
+| [RemcosRAT malware knowledge](agent-knowledge/malware/remcosrat-vbs-loader.md) | Approved analysis scope, exact artifacts, execution chain, ATT&CK context, and reporting guidance |
+| [IOC-006 validation prompt](prompts/remcosrat/IOC-006-RemcosRAT-IOC-Validation.md) | Structured IOC validation and evidence-classification workflow |
+| [HUNT-003 threat-hunt prompt](prompts/remcosrat/HUNT-003-RemcosRAT-Threat-Hunt.md) | Repeatable hunt using validated indicators and behavioral artifacts |
+| [Security controls](src/security-controls.md) | Evidence, safety, ingestion, KQL, escalation, and human-review safeguards |
 
-Command:
+The approved knowledge source gives the agent a stable reference. The prompts tell it how to investigate and structure results. The controls prevent intelligence or static analysis from being misreported as internal execution.
 
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-Summary:
-
-Allows PowerShell script execution.
-
 ---
 
-## Issue: Azure Authentication Failure
+## Investigation Workflow
 
-Error:
-
 ```text
-Authentication failed
-```
-
-Resolution:
-
-### Command Overview
-
-Command:
-
-```powershell
-az login
-```
-
-Summary:
-
-Authenticates to Azure.
-
----
-
-## Issue: Agent Does Not Return Data
-
-Potential Causes:
-
-* Agent not published
-* Knowledge base disconnected
-* Azure AI Search unavailable
-* Authentication issue
-
-Resolution Steps:
-
-1. Verify Azure AI Search status.
-2. Verify agent publication.
-3. Verify knowledge base connection.
-4. Verify Azure authentication.
-5. Re-run validation tests.
-
----
-
-# Lessons Learned
-
-## Lesson 1
-
-Knowledge-enhanced AI agents provide significantly better responses when connected to enterprise knowledge sources.
-
----
-
-## Lesson 2
-
-Azure AI Search improves retrieval accuracy and helps reduce unsupported AI responses.
-
----
-
-## Lesson 3
-
-Microsoft Foundry IQ simplifies enterprise AI agent deployment and management.
-
----
-
-## Lesson 4
-
-Validation testing should always be performed before production deployment.
-
----
-
-## Lesson 5
-
-Grounded responses improve user trust and response reliability.
-
----
-
-## Lesson 6
-
-Azure AI Projects SDK simplifies programmatic interaction with enterprise AI agents.
-
----
-
-# Best Practices
-
-## Authentication
-
-Use:
-
-```python
-DefaultAzureCredential()
+Validate approved source values
+  ↓
+Prepare or import standard threat intelligence
+  ↓
+Validate ThreatIntelIndicators ingestion
+  ↓
+Load behavioral reference data into the watchlist
+  ↓
+Run hash, network, and process hunts
+  ↓
+Correlate device, user, time, process, file, network, and alert evidence
+  ↓
+Document assumptions, unknowns, severity, and confidence
+  ↓
+Human analyst review and authorized action
 ```
-
-Benefits:
-
-* Secure authentication
-* Azure-native integration
-* Managed identity support
-
----
-
-## Knowledge Management
-
-Recommendations:
-
-* Maintain current documents.
-* Remove outdated information.
-* Validate knowledge sources regularly.
-* Monitor retrieval accuracy.
-
----
-
-## Agent Design
-
-Recommendations:
-
-* Use clear instructions.
-* Require knowledge retrieval.
-* Prevent unsupported responses.
-* Enable validation testing.
-
----
-
-# References
-
-## Microsoft Foundry Documentation
-
-https://learn.microsoft.com/azure/ai-foundry/
-
-https://ai.azure.com/
-
----
-
-## Azure AI Search Documentation
-
-https://learn.microsoft.com/azure/search/
-
-https://learn.microsoft.com/azure/search/search-create-service-portal
-
----
-
-## Azure AI Projects SDK Documentation
-
-https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme
-
-https://pypi.org/project/azure-ai-projects/
-
----
-
-## Azure Identity Documentation
-
-https://learn.microsoft.com/python/api/overview/azure/identity-readme
-
-https://pypi.org/project/azure-identity/
-
----
-
-## Azure CLI Documentation
-
-https://learn.microsoft.com/cli/azure/
 
-https://learn.microsoft.com/cli/azure/install-azure-cli-windows
+Analysts should preserve the query time range, relevant table names, device and user context, process ancestry, event identifiers, and telemetry gaps. Records from unrelated devices or time periods must not be combined without evidence linking them.
 
 ---
 
-## Python Documentation
+## Validation Results
 
-https://www.python.org/downloads/
+The original enterprise knowledge workflow documents the following validation results:
 
-https://docs.python.org/3/library/venv.html
+| Test ID | Validation item | Documented status |
+|---|---|---|
+| VT-01 | Azure AI Search lookup | Pass |
+| VT-02 | Resource-group validation | Pass |
+| VT-03 | Region validation | Pass |
+| VT-04 | Knowledge-base retrieval | Pass |
+| VT-05 | Document summarization | Pass |
+| VT-06 | Agent-name validation | Pass |
+| VT-07 | Python SDK execution | Pass |
+| VT-08 | Azure authentication | Pass |
+| VT-09 | Foundry agent connection | Pass |
+| VT-10 | Knowledge-base connection | Pass |
 
-https://pip.pypa.io/en/stable/
+Supporting enterprise screenshots are available in [`images/`](images/). The repository also contains validated JSON, exact-value, structure, and content checks for the RemcosRAT defensive artifacts. These file-level checks do not claim that the KQL was executed in a specific workspace or that malware activity was found.
 
----
-
-## GitHub Documentation
-
-https://docs.github.com/
-
-https://git-scm.com/download/win
+### Validation Evidence
 
----
-
-## Project Source Material
+| Evidence | File |
+|---|---|
+| Azure AI Search retrieval | [`enterprise-knowledge-agent-test-01.png`](images/enterprise-knowledge-agent-test-01.png) |
+| Resource retrieval | [`enterprise-knowledge-agent-test-02.png`](images/enterprise-knowledge-agent-test-02.png) |
+| Document summarization | [`enterprise-knowledge-agent-output.png`](images/enterprise-knowledge-agent-output.png) |
+| Python SDK example | [`run_agent.py.png`](images/run_agent.py.png) |
+| Python execution output | [`output-run-agent.py.png`](images/output-run-agent.py.png) |
+| RemcosRAT execution flow | [`RemcosRAT_Diagram.png`](images/remcosrat/RemcosRAT_Diagram.png) |
+| Sentinel threat-intelligence validation | [`RemcosRAT_Sentinel_15_Threat_Intelligence_Import_Validation_35610632.png`](images/remcosrat/RemcosRAT_Sentinel_15_Threat_Intelligence_Import_Validation_35610632.png) |
 
-Build Knowledge-Enhanced AI Agents with Foundry IQ Deployment Guide
+> A screenshot or passing file check supports documentation quality. Analysts must still validate current platform state and telemetry before operational use.
 
-Description:
-
-This project was developed using the deployment procedures, Python SDK integration examples, validation tests, and workflow documentation from the Build Knowledge-Enhanced AI Agents with Foundry IQ guide.
-
 ---
-
-# Final Repository Validation Checklist
 
 ## Repository Structure
 
-* [ ] README.md uploaded
-* [ ] images folder uploaded
-* [ ] src folder uploaded
-* [ ] run_agent.py uploaded
+```text
+foundry-iq-agent/
+├── README.md
+├── LICENSE
+├── agent-knowledge/
+│   └── malware/
+├── images/
+│   └── remcosrat/
+├── prompts/
+│   └── remcosrat/
+├── sentinel/
+│   └── remcosrat/
+│       ├── kql/
+│       ├── threat-intelligence/
+│       └── watchlists/
+└── src/
+    ├── architecture.md
+    ├── deployment-guide.md
+    ├── lessons-learned.md
+    ├── run_agent.py
+    ├── security-controls.md
+    └── remcosrat/
+        └── remcosrat-sentinel-integration.md
+```
 
 ---
 
-## Documentation Validation
+## Documentation Guide
 
-* [ ] Deployment guide completed
-* [ ] Architecture documented
-* [ ] Security controls documented
-* [ ] Lessons learned documented
-* [ ] References added
+| Document | Use it for |
+|---|---|
+| [Architecture](src/architecture.md) | Components, data flow, authentication, and validation architecture |
+| [Deployment Guide](src/deployment-guide.md) | Detailed Foundry, Search, knowledge-base, SDK, and validation procedures |
+| [Security Controls](src/security-controls.md) | Evidence standards, safe handling, KQL controls, escalation, and governance |
+| [Lessons Learned](src/lessons-learned.md) | Project observations, challenges, recommendations, and future improvements |
+| [RemcosRAT Sentinel Integration](src/remcosrat/remcosrat-sentinel-integration.md) | End-to-end threat-intelligence, watchlist, KQL, and SOC workflow |
 
----
-
-## Functional Validation
-
-* [ ] Agent created
-* [ ] Knowledge base connected
-* [ ] Azure AI Search operational
-* [ ] Validation tests completed
-* [ ] Python SDK execution successful
+This README intentionally avoids duplicating the detailed commands, troubleshooting steps, screenshots, and control descriptions in those documents.
 
 ---
 
-## GitHub Validation
+## Quick Start
 
-* [ ] Repository publicly accessible
-* [ ] Screenshots display correctly
-* [ ] Markdown renders correctly
-* [ ] Code blocks render correctly
-* [ ] Links function correctly
+### Enterprise Knowledge Workflow
+
+1. Review the [architecture](src/architecture.md) and [deployment guide](src/deployment-guide.md).
+2. Prepare Microsoft Foundry IQ, Azure AI Search, and an approved knowledge source.
+3. Configure and publish the grounded agent.
+4. Install the Azure AI Projects SDK and Azure Identity in an isolated Python environment.
+5. Review and adapt [`src/run_agent.py`](src/run_agent.py) without committing environment identifiers or secrets.
+6. Run the documented validation tests and preserve safe evidence.
+
+### Security Investigation Workflow
+
+1. Read the [RemcosRAT knowledge source](agent-knowledge/malware/remcosrat-vbs-loader.md).
+2. Review the [security controls](src/security-controls.md).
+3. Validate the STIX and watchlist files before ingestion.
+4. Use approved Sentinel procedures to import intelligence and watchlist data.
+5. Confirm ingestion with the threat-intelligence validation query.
+6. Run the hash, network, and process hunts in the appropriate Sentinel or Defender context.
+7. Correlate results and require human review before action.
+
+Detailed commands and platform procedures are intentionally maintained in the linked guides.
 
 ---
 
-# Author
+## Security and Responsible Use
 
-## James Banday
+The project follows these core rules:
 
-Cloud Engineering | Cybersecurity | AI | Platform Engineering
+- Do not store malware samples, suspicious archives, decoded binaries, or payloads in the repository.
+- Do not contact documented malicious infrastructure outside an authorized isolated lab.
+- Do not store credentials, keys, tokens, tenant IDs, workspace IDs, subscription IDs, or private customer data.
+- Keep standard threat intelligence separate from behavioral watchlists.
+- Treat KQL results as evidence requiring interpretation.
+- Do not claim compromise without supporting internal telemetry.
+- Require human review before isolation, blocking, containment, publication, or closure.
 
-### GitHub
+See [Security Controls](src/security-controls.md) for the complete 23-control framework.
 
-https://github.com/jbanday808/foundry-iq-agent
+---
 
-### LinkedIn
+## Key Lessons
 
-https://www.linkedin.com/in/james-allen-morta-banday-62a391128/
+- Knowledge quality strongly influences response quality.
+- Azure AI Search improves retrieval and grounding.
+- Clear agent instructions reduce unsupported responses.
+- Incremental validation catches configuration and content errors early.
+- Azure Identity supports safer authentication than embedded credentials.
+- Threat intelligence and environment telemetry must remain separate.
+- Exact IOC matches and behavioral similarities require different reporting language.
+- Human judgment remains essential for escalation and containment.
 
+See [Lessons Learned](src/lessons-learned.md) for detailed observations and recommendations.
 
 ---
 
 ## Project Status
 
-```text
-Status: Complete
-Version: 1.0
-Platform: Microsoft Foundry IQ
-Cloud Provider: Microsoft Azure
-Language: Python
-Repository: foundry-iq-agent
-```
+| Field | Value |
+|---|---|
+| Status | Complete |
+| Version | 1.0 |
+| Platform | Microsoft Foundry IQ |
+| Cloud provider | Microsoft Azure |
+| Primary language | Python |
+| Repository | `foundry-iq-agent` |
 
+“Complete” reflects the documented portfolio implementation and repository artifacts. It does not claim production deployment, current cloud-resource availability, Sentinel ingestion in every workspace, or detection of RemcosRAT in an environment.
 
+---
+
+## References
+
+### Project Documentation
+
+- [Architecture](src/architecture.md)
+- [Deployment Guide](src/deployment-guide.md)
+- [Security Controls](src/security-controls.md)
+- [Lessons Learned](src/lessons-learned.md)
+- [RemcosRAT Sentinel Integration](src/remcosrat/remcosrat-sentinel-integration.md)
+
+### External Documentation
+
+- [Microsoft Foundry documentation](https://learn.microsoft.com/azure/ai-foundry/)
+- [Microsoft Foundry portal](https://ai.azure.com/)
+- [Azure AI Search documentation](https://learn.microsoft.com/azure/search/)
+- [Azure AI Projects SDK documentation](https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme)
+- [Azure Identity documentation](https://learn.microsoft.com/python/api/overview/azure/identity-readme)
+- [Microsoft Sentinel documentation](https://learn.microsoft.com/azure/sentinel/)
+- [Microsoft Defender XDR advanced hunting](https://learn.microsoft.com/defender-xdr/advanced-hunting-overview)
+- [Kusto Query Language documentation](https://learn.microsoft.com/kusto/query/)
+- [MITRE ATT&CK](https://attack.mitre.org/)
+- [MalwareBazaar](https://bazaar.abuse.ch/)
+- [GitHub documentation](https://docs.github.com/)
+
+---
+
+## Author
+
+**James Banday**  
+Cloud Engineering | Cybersecurity | AI | Platform Engineering
+
+- Repository: [github.com/jbanday808/foundry-iq-agent](https://github.com/jbanday808/foundry-iq-agent)
+- LinkedIn: [James Allen Morta Banday](https://www.linkedin.com/in/james-allen-morta-banday-62a391128/)
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## Disclaimer
+
+This repository is intended for authorized cybersecurity research, education, enterprise AI development, threat hunting, malware analysis, detection engineering, Microsoft Sentinel investigation, Microsoft Defender XDR investigation, and portfolio demonstration.
+
+All AI-generated findings, KQL queries, threat-intelligence imports, escalation recommendations, and containment recommendations require human validation against actual environment telemetry before operational action. The repository does not claim that any monitored environment was compromised or that the documented malware executed internally.

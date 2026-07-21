@@ -1,0 +1,58 @@
+let RemcosSHA256 = dynamic(["356106324c797ba967a2a8cde2156e866fe008332046747866efa82a99e62083"]);
+let RemcosSHA1 = dynamic(["7e6fc1213ce2ca016d2d577d09a0c91d9f47a533"]);
+let RemcosMD5 = dynamic(["4713cea293132831a83cdb6ecf9d7637"]);
+DeviceFileEvents
+| where Timestamp >= ago(30d)
+| extend NormalizedSHA256 = tolower(SHA256),
+         NormalizedSHA1 = tolower(SHA1),
+         NormalizedMD5 = tolower(MD5),
+         NormalizedInitiatingSHA256 = tolower(InitiatingProcessSHA256),
+         NormalizedInitiatingSHA1 = tolower(InitiatingProcessSHA1),
+         NormalizedInitiatingMD5 = tolower(InitiatingProcessMD5)
+| where NormalizedSHA256 in (RemcosSHA256)
+    or NormalizedSHA1 in (RemcosSHA1)
+    or NormalizedMD5 in (RemcosMD5)
+    or NormalizedInitiatingSHA256 in (RemcosSHA256)
+    or NormalizedInitiatingSHA1 in (RemcosSHA1)
+    or NormalizedInitiatingMD5 in (RemcosMD5)
+| extend MatchType = case(
+    NormalizedSHA256 in (RemcosSHA256), "File SHA256 Match",
+    NormalizedSHA1 in (RemcosSHA1), "File SHA1 Match",
+    NormalizedMD5 in (RemcosMD5), "File MD5 Match",
+    NormalizedInitiatingSHA256 in (RemcosSHA256), "Initiating Process SHA256 Match",
+    NormalizedInitiatingSHA1 in (RemcosSHA1), "Initiating Process SHA1 Match",
+    NormalizedInitiatingMD5 in (RemcosMD5), "Initiating Process MD5 Match",
+    "Exact IOC Match")
+| extend MatchedHash = case(
+    NormalizedSHA256 in (RemcosSHA256), NormalizedSHA256,
+    NormalizedSHA1 in (RemcosSHA1), NormalizedSHA1,
+    NormalizedMD5 in (RemcosMD5), NormalizedMD5,
+    NormalizedInitiatingSHA256 in (RemcosSHA256), NormalizedInitiatingSHA256,
+    NormalizedInitiatingSHA1 in (RemcosSHA1), NormalizedInitiatingSHA1,
+    NormalizedInitiatingMD5 in (RemcosMD5), NormalizedInitiatingMD5,
+    "")
+| extend EvidenceClassification = "Exact IOC Match",
+         MalwareFamily = "RemcosRAT"
+| project Timestamp,
+          DeviceName,
+          DeviceId,
+          ActionType,
+          FileName,
+          FolderPath,
+          SHA256,
+          SHA1,
+          MD5,
+          FileSize,
+          InitiatingProcessFileName,
+          InitiatingProcessCommandLine,
+          InitiatingProcessSHA256,
+          InitiatingProcessSHA1,
+          InitiatingProcessMD5,
+          InitiatingProcessParentFileName,
+          InitiatingProcessAccountName,
+          ReportId,
+          MatchType,
+          MatchedHash,
+          EvidenceClassification,
+          MalwareFamily
+| order by Timestamp desc

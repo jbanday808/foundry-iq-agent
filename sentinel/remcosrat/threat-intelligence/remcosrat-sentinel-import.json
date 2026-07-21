@@ -1,0 +1,142 @@
+[
+  {
+    "type": "identity",
+    "spec_version": "2.1",
+    "id": "identity--dd60b420-ac43-4f47-89cc-849bd4643812",
+    "created": "2026-07-20T00:00:00.000Z",
+    "modified": "2026-07-20T00:00:00.000Z",
+    "name": "James Banday RemcosRAT Static Analysis",
+    "description": "Authorized static-analysis and threat-hunting content created for the AI Threat Hunt Agent in Microsoft Foundry.",
+    "identity_class": "individual"
+  },
+  {
+    "type": "indicator",
+    "spec_version": "2.1",
+    "id": "indicator--58b9f45d-2652-49bd-96e1-914e9366a26f",
+    "created_by_ref": "identity--dd60b420-ac43-4f47-89cc-849bd4643812",
+    "created": "2026-07-20T00:00:00.000Z",
+    "modified": "2026-07-20T00:00:00.000Z",
+    "name": "RemcosRAT VBS Loader SHA-256",
+    "description": "SHA-256 hash of the obfuscated RemcosRAT VBS loader identified through authorized static analysis.",
+    "indicator_types": [
+      "malicious-activity"
+    ],
+    "pattern": "[file:hashes.'SHA-256' = '356106324c797ba967a2a8cde2156e866fe008332046747866efa82a99e62083']",
+    "pattern_type": "stix",
+    "pattern_version": "2.1",
+    "valid_from": "2026-07-20T00:00:00.000Z",
+    "valid_until": "2027-07-20T00:00:00.000Z",
+    "confidence": 90,
+    "labels": [
+      "remcosrat",
+      "malware",
+      "vbs-loader",
+      "static-analysis",
+      "jbanday"
+    ]
+  },
+  {
+    "type": "indicator",
+    "spec_version": "2.1",
+    "id": "indicator--09e9fab1-d1a7-4443-a856-03e00533aed1",
+    "created_by_ref": "identity--dd60b420-ac43-4f47-89cc-849bd4643812",
+    "created": "2026-07-20T00:00:00.000Z",
+    "modified": "2026-07-20T00:00:00.000Z",
+    "name": "RemcosRAT VBS Loader SHA-1",
+    "description": "SHA-1 hash of the obfuscated RemcosRAT VBS loader identified through authorized static analysis.",
+    "indicator_types": [
+      "malicious-activity"
+    ],
+    "pattern": "[file:hashes.'SHA-1' = '7e6fc1213ce2ca016d2d577d09a0c91d9f47a533']",
+    "pattern_type": "stix",
+    "pattern_version": "2.1",
+    "valid_from": "2026-07-20T00:00:00.000Z",
+    "valid_until": "2027-07-20T00:00:00.000Z",
+    "confidence": 90,
+    "labels": [
+      "remcosrat",
+      "malware",
+      "vbs-loader",
+      "static-analysis",
+      "jbanday"
+    ]
+  },
+  {
+    "type": "indicator",
+    "spec_version": "2.1",
+    "id": "indicator--264b89e4-676b-4030-9216-267f87e3a873",
+    "created_by_ref": "identity--dd60b420-ac43-4f47-89cc-849bd4643812",
+    "created": "2026-07-20T00:00:00.000Z",
+    "modified": "2026-07-20T00:00:00.000Z",
+    "name": "RemcosRAT VBS Loader MD5",
+    "description": "MD5 hash of the obfuscated RemcosRAT VBS loader identified through authorized static analysis.",
+    "indicator_types": [
+      "malicious-activity"
+    ],
+    "pattern": "[file:hashes.MD5 = '4713cea293132831a83cdb6ecf9d7637']",
+    "pattern_type": "stix",
+    "pattern_version": "2.1",
+    "valid_from": "2026-07-20T00:00:00.000Z",
+    "valid_until": "2027-07-20T00:00:00.000Z",
+    "confidence": 90,
+    "labels": [
+      "remcosrat",
+      "malware",
+      "vbs-loader",
+      "static-analysis",
+      "jbanday"
+    ]
+  },
+  {
+    "type": "indicator",
+    "spec_version": "2.1",
+    "id": "indicator--4a9081a5-31f0-43ce-b98c-b84fe7b2a8b6",
+    "created_by_ref": "identity--dd60b420-ac43-4f47-89cc-849bd4643812",
+    "created": "2026-07-20T00:00:00.000Z",
+    "modified": "2026-07-20T00:00:00.000Z",
+    "name": "RemcosRAT Payload Domain",
+    "description": "Domain extracted from an encoded URL in the analyzed RemcosRAT VBS and PowerShell loader.",
+    "indicator_types": [
+      "malicious-activity"
+    ],
+    "pattern": "[domain-name:value = 'nameless-scene-7204.uploadeeeesclientess.workers.dev']",
+    "pattern_type": "stix",
+    "pattern_version": "2.1",
+    "valid_from": "2026-07-20T00:00:00.000Z",
+    "valid_until": "2027-07-20T00:00:00.000Z",
+    "confidence": 90,
+    "labels": [
+      "remcosrat",
+      "malware",
+      "vbs-loader",
+      "static-analysis",
+      "jbanday"
+    ]
+  },
+  {
+    "type": "indicator",
+    "spec_version": "2.1",
+    "id": "indicator--79b434c3-f3f1-4a37-a212-f39fcee08c13",
+    "created_by_ref": "identity--dd60b420-ac43-4f47-89cc-849bd4643812",
+    "created": "2026-07-20T00:00:00.000Z",
+    "modified": "2026-07-20T00:00:00.000Z",
+    "name": "RemcosRAT Payload URL",
+    "description": "Full payload URL decoded from the analyzed RemcosRAT VBS and PowerShell loader.",
+    "indicator_types": [
+      "malicious-activity"
+    ],
+    "pattern": "[url:value = 'https://nameless-scene-7204.uploadeeeesclientess.workers.dev/9VKJ-WXKE-YYQN-63FX/img_xxdd6n.png']",
+    "pattern_type": "stix",
+    "pattern_version": "2.1",
+    "valid_from": "2026-07-20T00:00:00.000Z",
+    "valid_until": "2027-07-20T00:00:00.000Z",
+    "confidence": 90,
+    "labels": [
+      "remcosrat",
+      "malware",
+      "vbs-loader",
+      "static-analysis",
+      "jbanday"
+    ]
+  }
+]

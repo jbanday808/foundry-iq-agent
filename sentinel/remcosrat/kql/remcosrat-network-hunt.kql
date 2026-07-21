@@ -1,0 +1,61 @@
+let RemcosDomain = "nameless-scene-7204.uploadeeeesclientess.workers.dev";
+let RemcosUrl = "https://nameless-scene-7204.uploadeeeesclientess.workers.dev/9VKJ-WXKE-YYQN-63FX/img_xxdd6n.png";
+let RemcosDownloadedFile = "img_xxdd6n.png";
+DeviceNetworkEvents
+| where Timestamp >= ago(30d)
+| extend NormalizedRemoteUrl = tolower(RemoteUrl),
+         NormalizedCommandLine = tolower(InitiatingProcessCommandLine)
+| extend IsFullUrlMatch = NormalizedRemoteUrl == RemcosUrl or NormalizedRemoteUrl contains RemcosUrl,
+         IsDomainMatch = NormalizedRemoteUrl == RemcosDomain
+             or NormalizedRemoteUrl endswith strcat(".", RemcosDomain)
+             or NormalizedRemoteUrl startswith strcat(RemcosDomain, "/")
+             or NormalizedRemoteUrl startswith strcat("http://", RemcosDomain)
+             or NormalizedRemoteUrl startswith strcat("https://", RemcosDomain),
+         IsDownloadedFileUrlMatch = NormalizedRemoteUrl contains RemcosDownloadedFile,
+         IsDownloadedFileCommandMatch = NormalizedCommandLine contains RemcosDownloadedFile
+| where IsFullUrlMatch
+    or IsDomainMatch
+    or IsDownloadedFileUrlMatch
+    or IsDownloadedFileCommandMatch
+| extend MatchType = case(
+    IsFullUrlMatch, "Full URL Match",
+    IsDomainMatch, "Domain Match",
+    IsDownloadedFileUrlMatch, "Downloaded Filename in URL",
+    IsDownloadedFileCommandMatch, "Downloaded Filename in Process Command Line",
+    "Exact IOC Match")
+| extend MatchedIndicator = case(
+    IsFullUrlMatch, RemcosUrl,
+    IsDomainMatch, RemcosDomain,
+    IsDownloadedFileUrlMatch, RemcosDownloadedFile,
+    IsDownloadedFileCommandMatch, RemcosDownloadedFile,
+    "")
+| extend InvestigationPriority = case(
+    IsFullUrlMatch or IsDomainMatch, "High",
+    "Medium")
+| extend EvidenceClassification = "Exact IOC Match",
+         MalwareFamily = "RemcosRAT"
+| project Timestamp,
+          DeviceName,
+          DeviceId,
+          ActionType,
+          RemoteUrl,
+          RemoteIP,
+          RemotePort,
+          Protocol,
+          LocalIP,
+          LocalPort,
+          InitiatingProcessFileName,
+          InitiatingProcessCommandLine,
+          InitiatingProcessFolderPath,
+          InitiatingProcessSHA256,
+          InitiatingProcessSHA1,
+          InitiatingProcessMD5,
+          InitiatingProcessParentFileName,
+          InitiatingProcessAccountName,
+          MatchType,
+          MatchedIndicator,
+          EvidenceClassification,
+          MalwareFamily,
+          InvestigationPriority,
+          ReportId
+| order by Timestamp desc
